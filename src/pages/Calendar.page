@@ -1,0 +1,19 @@
+<apex:page showHeader="false">
+hsdgfjsdgsghj
+    <apex:includeScript value="/lightning/lightning.out.js" />
+ 
+    <script>
+        $Lightning.use("c:CalendarApp", function() {
+            $Lightning.createComponent(
+                "c:Calendar",
+                {},
+                "theLead",
+                function(cmp) {
+                    console.log("Component created!");
+                    console.log(cmp);
+                });
+            });
+    </script>
+    
+    <div id="theLead"></div>
+</apex:page>
