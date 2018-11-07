@@ -1,0 +1,6 @@
+<!--
+ - Created by t.shkoda on 11/7/2018.
+ -->
+
+<apex:component id="CreateEvent">
+</apex:component>

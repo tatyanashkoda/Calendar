@@ -3,39 +3,35 @@ global with sharing class ResponsiveCalendarCtrl{
     public string todaysdate{get;set;}
 
     global ResponsiveCalendarCtrl(){
-        todaysdate=system.now().format('yyyy-MM-dd');
+        todaysdate = system.now().format('yyyy-MM-dd');
     }
 
     @RemoteAction
-    global static list<calendarWrapper> getCalendarItems(string ObjectName,string URL,string startdatetimeField,string enddatetimeField,string title){
-        list<calendarWrapper> lstcalendar=new list<calendarWrapper>();
-        TimeZone tz = UserInfo.getTimeZone();
-        string querystr='Select Id'+','+title+','+enddatetimeField+','+startdatetimeField;
-        if(URL!='id'){
-            querystr=querystr+','+URL;
+    global static list<calendarWrapper> getCalendarItems(){
+        list<calendarWrapper> lstcalendar = new list<calendarWrapper>();
+        TimeZone timeZone = UserInfo.getTimeZone();
+
+
+        List<Event> events = [SELECT  Id, Subject,StartDateTime, EndDateTime  From Event];
+        System.Debug(events);
+
+        for(Event objEvent:events){
+            System.Debug(objEvent);
+            calendarWrapper calendarWrapper = new calendarWrapper();
+
+            calendarWrapper.title = objEvent.Subject;
+            calendarWrapper.Id = objEvent.Id;
+            if(objEvent.StartDateTime != null){
+                calendarWrapper.startTime = objEvent.StartDateTime.getTime() + timeZone.getOffset(objEvent.StartDateTime);
+            }
+
+            if(objEvent.EndDateTime != null){
+                calendarWrapper.endTime = objEvent.EndDateTime.getTime() + timeZone.getOffset(objEvent.EndDateTime);
+
+            }
+            lstcalendar.add(calendarWrapper);
         }
-        querystr=querystr+' from '+ObjectName+' order by createdDate DESC limit 25000';//Limit the data
-        for(Sobject t:Database.query(querystr)){
-            calendarWrapper c=new calendarWrapper();
-            c.title=(string)t.get(title);
-            c.Id=(string)t.get(URL);
-            if(startdatetimeField !=null){
-                if(t.get(startdatetimeField)!=null){
-                    c.start=((datetime)t.get(startdatetimeField)).gettime()+tz.getOffset((datetime)t.get(startdatetimeField));
-                }
-            }
-            if(enddatetimeField != null){
-                if(t.get(enddatetimeField)!=null){
-                    c.endd=((datetime)t.get(enddatetimeField)).gettime()+tz.getOffset((datetime)t.get(enddatetimeField));
-                }
-            }
-            if(URL!='id'){
-                c.url=(string)t.get(URL);
-            }else{
-                c.url='/'+c.Id;
-            }
-            lstcalendar.add(c);
-        }
+        System.Debug(lstcalendar);
         return lstcalendar;
 
     }
@@ -44,7 +40,7 @@ global with sharing class ResponsiveCalendarCtrl{
         public string Id;
         public string title;
         public string url;
-        public long start;
-        public long endd;
+        public long startTime;
+        public long endTime;
     }
 }

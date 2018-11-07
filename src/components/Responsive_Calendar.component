@@ -1,10 +1,10 @@
 <apex:component controller="ResponsiveCalendarCtrl">
 
-    <apex:attribute name="ObjName"  type="string" description="Object Name to map to Calendar" required="true"/>
-    <apex:attribute name="StartDateTimeFieldName" type="string"  description="Start Date field Name" required="true"/>
-    <apex:attribute name="EndDateTimeFieldName" type="string"  description="End  Date field Name" required="true"/>
+    <apex:attribute name="ObjName"  type="string" description="Object Name to map to Calendar" />
+    <apex:attribute name="StartDateTimeFieldName" type="string"  description="Start Date field Name"/>
+    <apex:attribute name="EndDateTimeFieldName" type="string"  description="End  Date field Name" />
     <apex:attribute name="Namefield" type="string"  description="Pass the Name field here" default="Name"/>
-    <apex:attribute name="URL" type="string"   description="Pass the Name of the URL field" default="Id" required="true"/>
+    <apex:attribute name="URL" type="string"   description="Pass the Name of the URL field" default="Id" />
 
     <script>
         (function($) {
@@ -14,20 +14,20 @@
             var a=[];
             var d = new Date();
             Visualforce.remoting.Manager.invokeAction(
-                '{!$RemoteAction.ResponsiveCalendarCtrl.getCalendarItems}','{!ObjName}','{!URL}','{!StartDateTimeFieldName}','{!EndDateTimeFieldName}','{!Namefield}',
+                '{!$RemoteAction.ResponsiveCalendarCtrl.getCalendarItems}',
                 function(result, event){
                     if (event.status) {
                         var newArr = [];
                         for(var i = 0; i < result.length; i++){
                             var obj = result[i];
-                            obj.start=result[i]['start']+(d.getTimezoneOffset() * 60000);
-                            obj.end = result[i]['endd'] +(d.getTimezoneOffset() * 60000);
+                            obj.start=result[i]['startTime']+(d.getTimezoneOffset() * 60000);
+                            obj.end = result[i]['endTime'] +(d.getTimezoneOffset() * 60000);
                             obj.class='event-important';
-                            delete(obj['endd']);
+                            delete(obj['endTime']);
                             newArr.push(obj);
                         }
                         a=newArr;
-                        // console.log(a);
+                        console.log(a);
                         calendarapp();
                     } else if (event.type === 'exception') {
 
