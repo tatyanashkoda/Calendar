@@ -6,6 +6,7 @@ global with sharing class ResponsiveCalendarCtrl{
         todaysdate = system.now().format('yyyy-MM-dd');
     }
 
+
     @RemoteAction
     global static list<calendarWrapper> getCalendarItems(){
         list<calendarWrapper> lstcalendar = new list<calendarWrapper>();
@@ -16,7 +17,6 @@ global with sharing class ResponsiveCalendarCtrl{
         System.Debug(events);
 
         for(Event objEvent:events){
-            System.Debug(objEvent);
             calendarWrapper calendarWrapper = new calendarWrapper();
 
             calendarWrapper.title = objEvent.Subject;
@@ -31,7 +31,6 @@ global with sharing class ResponsiveCalendarCtrl{
             }
             lstcalendar.add(calendarWrapper);
         }
-        System.Debug(lstcalendar);
         return lstcalendar;
 
     }
