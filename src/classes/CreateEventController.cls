@@ -35,7 +35,8 @@ public with sharing class CreateEventController {
                     End_Time__c = event.End_Time__c,
                     Subject__c = event.Subject__c,
                     Status__c = Constants.WAITING_FOR_APPROVAL_STATUS,
-                    Contact__c = createContact().Id
+                    Contact__c = createContact().Id,
+                    Attached_to__c = Constants.CONTACT_MANAGER_ID
             );
             insert event;
         }

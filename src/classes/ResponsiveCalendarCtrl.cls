@@ -13,13 +13,16 @@ global with sharing class ResponsiveCalendarCtrl{
         TimeZone timeZone = UserInfo.getTimeZone();
 
 
-        List<Event> events = [SELECT  Id, Subject,StartDateTime, EndDateTime  From Event];
+        List<Event> events = [SELECT  Id, Subject,StartDateTime, EndDateTime, WhoId  From Event];
+        List<Contact> contacts = new List<Contact>();
+
+        Integer i = 0;
         System.Debug(events);
 
         for(Event objEvent:events){
             calendarWrapper calendarWrapper = new calendarWrapper();
-
-            calendarWrapper.title = objEvent.Subject;
+//            contacts = [SELECT Id, LastName, FirstName From Contact Where Id =:events.get(i).WhoId];
+            calendarWrapper.title = 'Test';
             calendarWrapper.Id = objEvent.Id;
             if(objEvent.StartDateTime != null){
                 calendarWrapper.startTime = objEvent.StartDateTime.getTime() + timeZone.getOffset(objEvent.StartDateTime);
@@ -30,6 +33,7 @@ global with sharing class ResponsiveCalendarCtrl{
 
             }
             lstcalendar.add(calendarWrapper);
+            i++;
         }
         return lstcalendar;
 
