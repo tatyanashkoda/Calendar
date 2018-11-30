@@ -1,32 +1,32 @@
 <apex:component controller="ResponsiveCalendarCtrl">
 
-    <apex:attribute name="ObjName"  type="string" description="Object Name to map to Calendar" />
-    <apex:attribute name="StartDateTimeFieldName" type="string"  description="Start Date field Name"/>
-    <apex:attribute name="EndDateTimeFieldName" type="string"  description="End  Date field Name" />
-    <apex:attribute name="Namefield" type="string"  description="Pass the Name field here" default="Name"/>
-    <apex:attribute name="URL" type="string"   description="Pass the Name of the URL field" default="Id" />
+    <apex:attribute name="ObjName" type="string" description="Object Name to map to Calendar"/>
+    <apex:attribute name="StartDateTimeFieldName" type="string" description="Start Date field Name"/>
+    <apex:attribute name="EndDateTimeFieldName" type="string" description="End  Date field Name"/>
+    <apex:attribute name="Namefield" type="string" description="Pass the Name field here" default="Name"/>
+    <apex:attribute name="URL" type="string" description="Pass the Name of the URL field" default="Id"/>
 
     <script>
-        (function($) {
+        (function ($) {
 
             "use strict";
 
-            var a=[];
+            var a = [];
             var d = new Date();
             Visualforce.remoting.Manager.invokeAction(
                 '{!$RemoteAction.ResponsiveCalendarCtrl.getCalendarItems}',
-                function(result, event){
+                function (result, event) {
                     if (event.status) {
                         var newArr = [];
-                        for(var i = 0; i < result.length; i++){
+                        for (var i = 0; i < result.length; i++) {
                             var obj = result[i];
-                            obj.start=result[i]['startTime']+(d.getTimezoneOffset() * 60000);
-                            obj.end = result[i]['endTime'] +(d.getTimezoneOffset() * 60000);
-                            obj.class='event-important';
+                            obj.start = result[i]['startTime'] + (d.getTimezoneOffset() * 0, 5);
+                            obj.end = result[i]['endTime'] + (d.getTimezoneOffset() * 0, 5);
+                            obj.class = 'event-important';
                             delete(obj['endTime']);
                             newArr.push(obj);
                         }
-                        a=newArr;
+                        a = newArr;
                         console.log(a);
                         calendarapp();
                     } else if (event.type === 'exception') {
@@ -38,31 +38,57 @@
                 {escape: true}
             );
 
-            function calendarapp(){
+            <!--Visualforce.remoting.Manager.invokeAction(-->
+            <!--'{!$RemoteAction.ResponsiveCalendarCtrl.getFreeTimesItems}',-->
+            <!--function(result, event){-->
+            <!--if (event.status) {-->
+            <!--var newArr = [];-->
+            <!--for(var i = 0; i < result.length; i++){-->
+            <!--var obj1 = result[i];-->
+            <!--obj1.start=result[i]['startTime']+(d.getTimezoneOffset() * 0,5);-->
+            <!--obj1.end = result[i]['endTime'] +(d.getTimezoneOffset() * 0,5);-->
+            <!--obj1.class='event-free';-->
+            <!--delete(obj1['endTime']);-->
+            <!--newArr.push(obj1);-->
+            <!--}-->
+            <!--a=newArr;-->
+            <!--console.log(a);-->
+            <!--calendarapp();-->
+            <!--} else if (event.type === 'exception') {-->
+
+            <!--} else {-->
+
+            <!--}-->
+            <!--},-->
+            <!--{escape: true}-->
+
+            <!--);-->
+
+            function calendarapp() {
 
                 var options = {
-                    events_source: function(){
+                    events_source: function () {
                         console.log(a);
                         return a;
                     },
                     view: 'month',
                     tmpl_path: '{!URLFOR($Resource.CalendarLibrary, 'Bootstrap_ResponsiveCalendar/tmpls/')}',
                     tmpl_cache: false,
-                    day: '{!JSENCODE(todaysdate)}' ,
-                    onAfterEventsLoad: function(events) {
-                        if(!events) {
+                    day: '{!JSENCODE(todaysdate)}',
+                    onAfterEventsLoad: function (events) {
+                        if (!events) {
                             return;
                         }
                         var list = $('#eventlist');
                         list.html('');
 
-                        $.each(events, function(key, val) {
+                        $.each(events, function (key, val) {
                             $(document.createElement('li'))
                                 .html('<a href="' + val.url + '">' + val.title + '</a>')
                                 .appendTo(list);
                         });
                     },
-                    onAfterViewLoad: function(view) {
+                    onAfterViewLoad: function (view) {
                         $('.page-header h3').text(this.getTitle());
                         $('.btn-group button').removeClass('active');
                         $('button[data-calendar-view="' + view + '"]').addClass('active');
@@ -76,37 +102,37 @@
 
                 var calendar = $('#calendar').calendar(options);
 
-                $('.btn-group button[data-calendar-nav]').each(function() {
+                $('.btn-group button[data-calendar-nav]').each(function () {
                     var $this = $(this);
-                    $this.click(function() {
+                    $this.click(function () {
                         calendar.navigate($this.data('calendar-nav'));
                     });
                 });
 
-                $('.btn-group button[data-calendar-view]').each(function() {
+                $('.btn-group button[data-calendar-view]').each(function () {
                     var $this = $(this);
-                    $this.click(function() {
+                    $this.click(function () {
                         calendar.view($this.data('calendar-view'));
                     });
                 });
 
-                $('#first_day').change(function(){
+                $('#first_day').change(function () {
                     var value = $(this).val();
                     value = value.length ? parseInt(value) : null;
                     calendar.setOptions({first_day: value});
                     calendar.view();
                 });
 
-                $('#language').change(function(){
+                $('#language').change(function () {
                     calendar.setLanguage($(this).val());
                     calendar.view();
                 });
 
-                $('#events-in-modal').change(function(){
+                $('#events-in-modal').change(function () {
                     var val = $(this).is(':checked') ? $(this).val() : null;
                     calendar.setOptions({modal: val});
                 });
-                $('#events-modal .modal-header, #events-modal .modal-footer').click(function(e){
+                $('#events-modal .modal-header, #events-modal .modal-footer').click(function (e) {
                     //e.preventDefault();
                     //e.stopPropagation();
                 });

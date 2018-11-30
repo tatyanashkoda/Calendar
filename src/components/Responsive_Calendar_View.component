@@ -8,7 +8,8 @@
         <meta charset="UTF-8"/>
         <link rel="stylesheet" href="{!URLFOR($Resource.CalendarLibrary, 'Bootstrap_ResponsiveCalendar/components/bootstrap3/css/bootstrap.min.css')}"/>
         <link rel="stylesheet" href="{!URLFOR($Resource.CalendarLibrary, 'Bootstrap_ResponsiveCalendar/components/bootstrap3/css/bootstrap-theme.min.css')}"/>
-        <link rel="stylesheet" href="{!URLFOR($Resource.CalendarLibrary, 'Bootstrap_ResponsiveCalendar/css/calendar.css')}"/>
+        <!--<link rel="stylesheet" href="{!URLFOR($Resource.CalendarLibrary, 'Bootstrap_ResponsiveCalendar/css/calendar.css')}"/>-->
+        <apex:stylesheet value="{!$resource.calendarCss}"/>
 
     </head>
     <body>
@@ -16,7 +17,7 @@
         <div class="page-header">
             <div class="pull-right form-inline">
                 <div class="btn-group">
-                    <button class="btn btn-primary" data-calendar-nav="prev">Prev</button>
+                    <button class="btn btn-primar" data-calendar-nav="prev">Prev</button>
                     <button class="btn" data-calendar-nav="today">Today</button>
                     <button class="btn btn-primary" data-calendar-nav="next">Next</button>
                 </div>
