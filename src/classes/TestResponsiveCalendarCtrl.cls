@@ -1,6 +1,6 @@
 @isTest
 private class TestResponsiveCalendarCtrl{
-   
+
    static testmethod void testgetCalendarItems(){
        Test.startTest();
        Account acc=new Account();
