@@ -1,25 +1,25 @@
-const CalendarSingleton = (function(){
+const CalendarSingleton = (function () {
     let calendarInstance;
-    
-    function createCalendar(){
+
+    function createCalendar() {
         //Initialize Full Calender
         //and render inside 'calendar' div
         const calendar = $('#calendar').fullCalendar({
-            
+
             //Toolbar header
             header: {
-                left:   'prev,next today',
+                left: 'prev,next today',
                 center: 'title',
                 right: 'agendaDay,agendaWeek,month'
             },
-            
+
             //Changing text for different buttons
-            buttonText :{
-                today:    'Today',
-                month:    'Month',
-                week:     'Week Agenda',
-                day:      'Day Agenda',
-                list:     'List',
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                week: 'Week Agenda',
+                day: 'Day Agenda',
+                list: 'List',
                 prevYear: 'Previous Year',
                 nextYear: 'Next Year',
                 prev: 'Previous',
@@ -29,41 +29,41 @@ const CalendarSingleton = (function(){
             footer: {
                 right: 'prevYear, nextYear'
             },
-            
+
             themeSystem: 'jquery-ui',
             aspectRatio: 2,
-            selectable:true,
-            
-            
+            selectable: true,
+
+
             //dayClick handler
-            select : function(start, end) {
+            select: function (start, end) {
                 //alert('a day has been clicked!');
                 handleSelect(start, end);
                 $("#dialog").dialog();
             },
-            
+
             //Handle event click
-            eventClick : function(calendarEvent, browserEvent, view){
+            eventClick: function (calendarEvent, browserEvent, view) {
                 handleEventClick(calendarEvent, browserEvent, view);
             },
-            
+
             //Hanadle drag-drop of event
-            eventDrop: function(event, delta, revertFunc) {
+            eventDrop: function (event, delta, revertFunc) {
                 //alert(event.title + " was dropped on " + event.start.format());
                 if (!confirm("Are you sure about this change?")) {
                     revertFunc();
-                } else{
-                   handleEventDrop(event); 
+                } else {
+                    handleEventDrop(event);
                 }
             }
         });
-        
+
         return calendar;
     }
-    
+
     return {
-        getCalendar : function(){
-            if(!calendarInstance){
+        getCalendar: function () {
+            if (!calendarInstance) {
                 calendarInstance = createCalendar();
             }
             return calendarInstance;
@@ -71,18 +71,18 @@ const CalendarSingleton = (function(){
     }
 })();
 
-const addEvents = function(eventsData){
+const addEvents = function (eventsData) {
     const events = [];
-    eventsData.forEach(function(event){
+    eventsData.forEach(function (event) {
         const newEvent = {};
-        newEvent.Id = event.Event__c;
-        newEvent.title  = event.Event__r.Name;
-        newEvent.start = new Date(event.Event__r.Start_Time__c).toISOString();
-        newEvent.end = new Date(event.Event__r.End_Time__c).toISOString();
-        newEvent.editable  = true;
+        newEvent.Id = event.Id;
+        newEvent.title = event.Title;
+        newEvent.start = new Date(event.StartDateTime).toISOString();
+        newEvent.end = new Date(event.EndDateTime).toISOString();
+        newEvent.editable = true;
         events.push(newEvent);
     });
-    if(events.length > 0){
+    if (events.length > 0) {
         $('#calendar').fullCalendar('removeEventSources');
         $('#calendar').fullCalendar('addEventSource', events);
     }
@@ -92,21 +92,21 @@ const addEvents = function(eventsData){
  * This function will be called when the user
  * click on an event
  * */
-const handleEventClick = function(calendarEvent, browserEvent, view){
+const handleEventClick = function (calendarEvent, browserEvent, view) {
     $('#updateEvent').css("display", "block");
     $('#updateEventTitle').val(calendarEvent.title);
     $('#updateStartTime').val(calendarEvent.start);
     $('#updateEndTime').val(calendarEvent.end);
     $('#recordId').val(calendarEvent.Id);
-    $("#dialog").dialog( "close" );
+    $("#dialog").dialog("close");
 }
 
 /**
  * This function will be called when the user
  * select a duration from the calendar
  * */
-const handleSelect = function(start, end){
-    $('#createEventTitle').val("");
+const handleSelect = function (start, end) {
+    $('#createContactLastName').val("");
     $('#createStartTime').val(start);
     $('#createEndTime').val(end);
 }
@@ -114,7 +114,7 @@ const handleSelect = function(start, end){
 /**
  * Prepare an event object to pass to server side remote call
  * */
-const prepareEvent = function(title, startTime, endTime, Id){
+const prepareEvent = function (title, startTime, endTime, Id) {
     const calendarEvent = {};
     calendarEvent.Id = Id;
     calendarEvent.Name = title;
@@ -126,7 +126,7 @@ const prepareEvent = function(title, startTime, endTime, Id){
 /**
  * This method will be called when event is drag and dropped
  * */
-const handleEventDrop = function(event){
+const handleEventDrop = function (event) {
     const calendarEvent = {};
     calendarEvent.Id = event.Id;
     calendarEvent.Name = event.title;
@@ -139,32 +139,32 @@ const handleEventDrop = function(event){
  * This code will be executed on page load
  * and will attach necessary listeners
  * */
-const attachListners = function(){
-  
+const attachListners = function () {
+
     /**
      * Adding submit event listener on newEventForm
      * */
-    $('#newEventForm').submit(function(event){
-        const title = $('#createEventTitle').val();
+    $('#newEventForm').submit(function (event) {
+        const title = $('#createContactLastName').val();
         const startTime = $('#createStartTime').val();
         const endTime = $('#createEndTime').val();
-        if(new Date(startTime).getTime() > new Date(endTime).getTime()){
+        if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
             $("#createStartTime").after('<span style="color:red"><br>Start time must be before End time</span>');
         }
         prepareEvent(title, startTime, endTime);
-        $("#dialog").dialog( "close" );
+        $("#dialog").dialog("close");
         event.preventDefault();
     });
-    
+
     /**
      * Adding submit event listener on updateEventForm
      * */
-    $('#updateEventForm').submit(function(event){
+    $('#updateEventForm').submit(function (event) {
         const title = $('#updateEventTitle').val();
         const startTime = $('#updateStartTime').val();
         const endTime = $('#updateEndTime').val();
         const Id = $('#recordId').val();
-        if(new Date(startTime).getTime() > new Date(endTime).getTime()){
+        if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
             $("#updateStartTime").after('<span style="color:red"><br>Start time must be before End time</span>');
         }
         prepareEvent(title, startTime, endTime, Id);
