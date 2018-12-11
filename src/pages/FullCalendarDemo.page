@@ -1,4 +1,4 @@
-<apex:page lightningStylesheets="true" controller="FullCalendarDemo">
+<apex:page showHeader="false" sidebar="false"  lightningStylesheets="true" applyBodyTag="false" applyHtmlTag="false" standardStylesheets="false" controller="CalendarController">
     <apex:stylesheet value="{!URLFOR($Resource.fullcalendar,'fullcalendar/fullcalendar.min.css')}"/>
     <apex:stylesheet value="{!URLFOR($Resource.fullcalendar,'fullcalendar/jquery-ui.min.css')}"/>
     <apex:includeScript value="{!URLFOR($Resource.fullcalendar,'/fullcalendar/jquery.min.js')}"/>
@@ -27,25 +27,21 @@
     <div style="width:100%">
         <div id='calendar' style="width:70%; padding:20px; float:left"></div>
         <div id='updateEvent' style="width:30%; padding:20px; float:right; display:none">
-            <div class="vf-header">Update Existing Event</div>
+            <div class="vf-header">Existing Event</div>
             <p>
             <form id="updateEventForm">
                 <table>
                     <tr>
-                        <td>Event Title</td>
-                        <td><input type="text" id="updateEventTitle" style="margin:5px"/></td>
+                        <td>Contact Name</td>
+                        <td><input readonly="readonly" type="text" id="getContactName" style="margin:5px"/></td>
                     </tr>
                     <tr>
                         <td>Start Time</td>
-                        <td><input type="text" id="updateStartTime" style="margin:5px"/></td>
+                        <td><input readonly="readonly" type="text" id="updateStartTime" style="margin:5px"/></td>
                     </tr>
                     <tr>
                         <td>End Time</td>
-                        <td><input type="text" id="updateEndTime" style="margin:5px"/></td>
-                    </tr>
-                    <tr>
-                        <td><input type="hidden" id="recordId" name="recordId"/></td>
-                        <td><input type="submit" value="Update Event" style="margin:5px"/></td>
+                        <td><input readonly="readonly" type="text" id="updateEndTime" style="margin:5px"/></td>
                     </tr>
                 </table>
             </form>
@@ -56,8 +52,16 @@
         <form id="newEventForm">
             <table>
                 <tr>
-                    <td>Event Last Name</td>
+                    <td>Last Name</td>
                     <td><input type="text" id="createContactLastName" style="margin:5px"/></td>
+                </tr>
+                <tr>
+                    <td>First Name</td>
+                    <td><input type="text" id="createContactFirstName" style="margin:5px"/></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><input type="text" id="createContactEmail" style="margin:5px"/></td>
                 </tr>
                 <tr>
                     <td>Start Time</td>
@@ -68,6 +72,10 @@
                     <td><input type="text" id="createEndTime" style="margin:5px"/></td>
                 </tr>
                 <tr>
+                    <td>Subject</td>
+                    <td><input type="text" id="createEventSubject" style="margin:5px"/></td>
+                </tr>
+                <tr>
                     <td></td>
                     <td><input type="submit" value="Create Event" style="margin:5px"/></td>
                 </tr>
@@ -75,40 +83,26 @@
         </form>
     </div>
     <script>
-        /**
-         * Your org's my domain url
-         * Please include port as well if any
-         **/
+
         var lightningDomain = "https://lightning-training1-dev-ed.lightning.force.com/";
 
         $(document).ready(function () {
-            //Attach Listeners
             attachListners();
-            //Initialize calendar
             const calendar = CalendarSingleton.getCalendar();
-            //Get user's events
             getEvents(calendar);
-
             $("#createStartTime,#createEndTime,#updateStartTime,#updateEndTime").datepicker();
         });
 
-        /**
-         * Function to invoke remote action to get current user's
-         * all events and populate the calendar based on response
-         * */
+
         function getEvents() {
-            //Invoking remote action
             Visualforce.remoting.Manager.invokeAction(
-                '{!$RemoteAction.FullCalendarDemo.getEvents}',
+                '{!$RemoteAction.CalendarController.getEvents}',
                 function (result, event) {
                     if (event.status) {
-                        //Call was successful, add events to calendar
                         addEvents(result, calendar);
                     } else if (event.type === 'exception') {
-                        //Exception in remote call
                         console.error(`${event.message} ${event.where}`);
                     } else {
-                        //Call was unsuccssful
                         console.error(`${event.message}`);
                     }
                 },
@@ -116,24 +110,17 @@
             );
         }
 
-        /**
-         * Function to invoke remote action to get current user's
-         * all events and populate the calendar based on response
-         * */
         function createOrUpdateEvents(calendarEvent) {
-            //Invoking remote action
+
             Visualforce.remoting.Manager.invokeAction(
-                '{!$RemoteAction.FullCalendarDemo.createOrUpdateEvents}',
+                '{!$RemoteAction.CalendarController.createOrUpdateEvents}',
                 calendarEvent,
                 function (result, event) {
                     if (event.status) {
-                        //Call was successful, add events to calendar
                         addEvents(result, calendar);
                     } else if (event.type === 'exception') {
-                        //Exception in remote call
                         console.error(`${event.message} ${event.where}`);
                     } else {
-                        //Call was unsuccssful
                         console.error(`${event.message}`);
                     }
                 },

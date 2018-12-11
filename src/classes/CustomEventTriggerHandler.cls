@@ -3,20 +3,20 @@ public with sharing class CustomEventTriggerHandler extends TriggerHandler {
     List<Messaging.SingleEmailMessage> mails;
 
     public override void afterUpdate() {
-       // checkStatus();
+        checkStatus();
     }
 
     public override void afterInsert() {
-//        List<Custom_Event__c> customEvents = trigger.new;
-//        List<Messaging.SingleEmailMessage> mails;
-//        for (Custom_Event__c cEvent : customEvents) {
-//            mails = sendEmail(Constants.EMAIL_TEMPLATE_WAITING, cEvent.Attached_to__c, cEvent.Id);
-//        }
-//        Messaging.SendEmailResult[] resultMail = Messaging.sendEmail(mails);
+        List<Custom_Event__c> customEvents = trigger.new;
+        List<Messaging.SingleEmailMessage> mails;
+        for (Custom_Event__c cEvent : customEvents) {
+            mails = sendEmail(Constants.EMAIL_TEMPLATE_WAITING, cEvent.Attached_to__c, cEvent.Id);
+        }
+        Messaging.SendEmailResult[] resultMail = Messaging.sendEmail(mails);
     }
 
     public override void afterDelete() {
-        //deleteEvant();
+        deleteEvant();
     }
 
     public static Messaging.SingleEmailMessage generateEmailMessage(Id templateId, Id targetId, Id whatId) {

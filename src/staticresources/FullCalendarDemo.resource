@@ -94,7 +94,7 @@ const addEvents = function (eventsData) {
  * */
 const handleEventClick = function (calendarEvent, browserEvent, view) {
     $('#updateEvent').css("display", "block");
-    $('#updateEventTitle').val(calendarEvent.title);
+    $('#getContactName').val(calendarEvent.title);
     $('#updateStartTime').val(calendarEvent.start);
     $('#updateEndTime').val(calendarEvent.end);
     $('#recordId').val(calendarEvent.Id);
@@ -114,12 +114,16 @@ const handleSelect = function (start, end) {
 /**
  * Prepare an event object to pass to server side remote call
  * */
-const prepareEvent = function (title, startTime, endTime, Id) {
+const prepareEvent = function (title, startTime, endTime, subject, firstName, lastName, email, Id) {
     const calendarEvent = {};
     calendarEvent.Id = Id;
     calendarEvent.Name = title;
     calendarEvent.Start_Time__c = new Date(startTime).getTime();
     calendarEvent.End_Time__c = new Date(endTime).getTime();
+    calendarEvent.Subject__c = subject;
+    calendarEvent.Contact_First_Name__c = firstName;
+    calendarEvent.Contact_Last_Name__c = lastName;
+    calendarEvent.Contact_Email__c = email;
     createOrUpdateEvents(JSON.stringify(calendarEvent));
 }
 
@@ -148,10 +152,14 @@ const attachListners = function () {
         const title = $('#createContactLastName').val();
         const startTime = $('#createStartTime').val();
         const endTime = $('#createEndTime').val();
+        const subject = $('#createEventSubject').val();
+        const firstName =  $('#createContactFirstName').val();
+        const lastName =  $('#createContactLastName').val();
+        const email =  $('#createContactEmail').val();
         if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
             $("#createStartTime").after('<span style="color:red"><br>Start time must be before End time</span>');
         }
-        prepareEvent(title, startTime, endTime);
+        prepareEvent(title, startTime, endTime,subject, firstName, lastName, email );
         $("#dialog").dialog("close");
         event.preventDefault();
     });
@@ -160,7 +168,7 @@ const attachListners = function () {
      * Adding submit event listener on updateEventForm
      * */
     $('#updateEventForm').submit(function (event) {
-        const title = $('#updateEventTitle').val();
+        const title = $('#getContactName').val();
         const startTime = $('#updateStartTime').val();
         const endTime = $('#updateEndTime').val();
         const Id = $('#recordId').val();
